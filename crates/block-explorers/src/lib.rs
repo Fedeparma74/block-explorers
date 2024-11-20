@@ -51,14 +51,14 @@ pub struct Client {
     client: reqwest::Client,
     /// Etherscan API key
     api_key: Option<String>,
-    /// Etherscan API endpoint like <https://api(-chain).etherscan.io/api>
+    /// Etherscan API endpoint like <https://api.etherscan.io/v2/api>
     etherscan_api_url: Url,
     /// Etherscan base endpoint like <https://etherscan.io>
     etherscan_url: Url,
     /// Path to where ABI files should be cached
     cache: Option<Cache>,
     /// Chain ID
-    chain_id: Option<u64>,
+    chain_id: u64,
 }
 
 impl Client {
@@ -298,19 +298,14 @@ impl ClientBuilder {
     ///
     /// Fails if the chain is not supported by etherscan
     pub fn chain(self, chain: Chain) -> Result<Self> {
-        fn urls(
-            (api, url): (impl IntoUrl, impl IntoUrl),
-        ) -> (reqwest::Result<Url>, reqwest::Result<Url>) {
-            (api.into_url(), url.into_url())
-        }
-        let (etherscan_api_url, etherscan_url) = chain
-            .named()
-            .ok_or_else(|| EtherscanError::ChainNotSupported(chain))?
-            .etherscan_urls()
-            .map(urls)
-            .ok_or_else(|| EtherscanError::ChainNotSupported(chain))?;
-
-        self.with_chain_id(chain).with_api_url(etherscan_api_url?)?.with_url(etherscan_url?)
+        self.with_chain_id(chain).with_url(
+            chain
+                .named()
+                .ok_or_else(|| EtherscanError::ChainNotSupported(chain))?
+                .etherscan_urls()
+                .ok_or_else(|| EtherscanError::ChainNotSupported(chain))?
+                .1,
+        )
     }
 
     /// Configures the etherscan url
@@ -377,11 +372,11 @@ impl ClientBuilder {
             client: client.unwrap_or_default(),
             api_key,
             etherscan_api_url: etherscan_api_url
-                .ok_or_else(|| EtherscanError::Builder("etherscan api url".to_string()))?,
+                .unwrap_or("https://api.etherscan.io/v2/api".try_into().unwrap()),
             etherscan_url: etherscan_url
                 .ok_or_else(|| EtherscanError::Builder("etherscan url".to_string()))?,
             cache,
-            chain_id,
+            chain_id: chain_id.ok_or_else(|| EtherscanError::Builder("chain id".to_string()))?,
         };
         Ok(client)
     }
@@ -509,8 +504,8 @@ struct Query<'a, T: Serialize> {
     apikey: Option<Cow<'a, str>>,
     module: Cow<'a, str>,
     action: Cow<'a, str>,
-    #[serde(rename = "chainId", skip_serializing_if = "Option::is_none")]
-    chain_id: Option<u64>,
+    #[serde(rename = "chainId")]
+    chain_id: u64,
     #[serde(flatten)]
     other: T,
 }
@@ -539,7 +534,9 @@ mod tests {
     #[test]
     fn test_api_paths() {
         let client = Client::new(Chain::goerli(), "").unwrap();
-        assert_eq!(client.etherscan_api_url.as_str(), "https://api-goerli.etherscan.io/api");
+        assert_eq!(client.etherscan_api_url.as_str(), "https://api.etherscan.io/v2/api");
+        assert_eq!(client.etherscan_url.as_str(), "https://goerli.etherscan.io/");
+        assert_eq!(client.chain_id, 5);
 
         assert_eq!(client.block_url(100), "https://goerli.etherscan.io/block/100");
     }

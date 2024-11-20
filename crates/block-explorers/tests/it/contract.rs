@@ -85,6 +85,7 @@ async fn can_fetch_deposit_contract_source_code_from_blockscout() {
         .with_api_url("https://eth.blockscout.com/api")
         .unwrap()
         .with_api_key("test")
+        .with_chain_id(Chain::mainnet())
         .build()
         .unwrap();
     let meta = client
@@ -108,6 +109,7 @@ async fn can_fetch_other_contract_source_code_from_blockscout() {
         .with_api_url("https://eth.blockscout.com/api")
         .unwrap()
         .with_api_key("test")
+        .with_chain_id(Chain::mainnet())
         .build()
         .unwrap();
     let meta = client
