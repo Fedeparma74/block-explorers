@@ -5,7 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.0](https://github.com/foundry-rs/block-explorers/releases/tag/v0.9.0) - 2024-11-18
+## [0.11.0](https://github.com/foundry-rs/block-explorers/releases/tag/v0.11.0) - 2025-01-21
+
+### Dependencies
+
+- Bump compilers ([#74](https://github.com/foundry-rs/block-explorers/issues/74))
+- Bump alloy 0.7 ([#69](https://github.com/foundry-rs/block-explorers/issues/69))
+
+### Miscellaneous Tasks
+
+- Update deny.toml ([#71](https://github.com/foundry-rs/block-explorers/issues/71))
+- Release 0.10.0
+- Release 0.10.0
+
+### Other
+
+- Move deny to ci ([#70](https://github.com/foundry-rs/block-explorers/issues/70))
+
+### Styling
+
+- [`blob-explorers`] Accomodate new blobscan API changes ([#68](https://github.com/foundry-rs/block-explorers/issues/68))
+
+## [foundry-block-explorers-v0.9.0](https://github.com/foundry-rs/block-explorers/releases/tag/vfoundry-block-explorers-v0.9.0) - 2024-11-18
 
 ### Bug Fixes
 
@@ -24,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Miscellaneous Tasks
 
+- Release 0.9.0
 - Release 0.8.0
 - Alloy 0.4 ([#65](https://github.com/foundry-rs/block-explorers/issues/65))
 - Release 0.7.3
